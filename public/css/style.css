@@ -1,0 +1,18 @@
+.strip-margin p:not(:last-of-type) {
+	margin-bottom: 0px;
+}
+
+@media print {
+	.receipt{
+        box-shadow: none !important;
+    }
+
+    .receipt {
+        border-left: 0px !important;
+        border-right: 0px !important;
+    }
+
+    .receipt .btn {
+        visibility: hidden;
+    }
+}

@@ -1,0 +1,62 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-12 col-md-8 col-lg-8 receipt py-3 border border rounded shadow-sm">
+            {{#if transaction_result}}
+            <div id="section-to-print">
+                <p class="text-center lead">Thank you for your payment</p>
+
+                <div class="order-reference text-right strip-margin my-1">
+                    <p>Order# <strong>{{order_no}}</strong></p>
+                    <p>Reference# <strong>{{reference_no}}</strong></p>
+                    <p>Invoice# <strong>{{invoice_number}}</strong></p>
+                </div>
+
+                <div class="client-details strip-margin my-1">
+                    <div class="row">
+                        <div class="col text-left">
+                            <p class="text-muted"><small>Client</small></p>
+                            <p>Account# {{account_number}}</p>
+                            <p>{{policyholder_name}}</p>
+                            <p>{{customer_email}}</p>
+                            <p>{{phone_number}}</p>
+                        </div>
+                        <div class="col text-right">
+                            <p class="text-muted"><small>Company</small></p>
+                            <p>{{insurance_company}}</p>
+                            <p>502-6339 200th Street</p>
+                            <p>Langley BC, V2Y 1A2</p>
+                            <p>T: 604-276-0244</p>
+                            <p>E: office@brokerbc.ca</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive my-2">
+                    <table class="table">
+                        <tbody>
+                            <tr class="border-bottom">
+                                <td class="text-left">Memo</td>
+                                <td class="text-right font-weight-bold">{{memo}}</td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <td class="text-left">Payment Amount</td>
+                                <td class="text-right font-weight-bold">{{total_amount}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-success mx-auto d-block text-white"
+                onclick="window.print();return false;">Print Receipt</button>
+            {{else}}
+            <div class="alert alert-danger text-center" role="alert">
+                Sorry your transaction didn't go through
+            </div>
+            <button type="button" class="btn btn-success mx-auto d-block text-white"
+                onclick="tryAgain({insurance_company: '{{insurance_company}}', customer_email: '{{customer_email}}', account_number: '{{account_number}}', policyholder_name: '{{policyholder_name}}', memo: '{{memo}}', invoice_number: '{{invoice_number}}', phone_number: '{{phone_number}}', total_amount: '{{total_amount}}'})">Try
+                Again</button>
+            {{/if}}
+        </div>
+    </div>
+</div>

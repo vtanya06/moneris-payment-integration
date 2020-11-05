@@ -1,0 +1,130 @@
+<h1 class="text-center mb-3">Secure Online Payments</h1>
+<p class="text-center">You can pay your {{agency}} Invoice through our secure online payment portal with a
+    VISA, Mastercard or Debit/VISA card. Please note the following information on your {{agency}} Invoice and
+    fill out the information in the fields below.</p>
+<form class="border p-3 needs-validation" novalidate id="init-form" action="/api/payments/initialize" method="POST">
+    <div class="form-group row">
+        <label for="insurance_company" class="col-sm-2 col-form-label">Insurance Company</label>
+        <div class="col-sm-10">
+            <input type="text" readonly class="form-control-plaintext" id="insurance_company" name="insurance_company"
+                value="{{agency}}">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="account_number" class="col-sm-2 col-form-label">Account Number</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="account_number" id="account_number" value="{{account_number}}"
+                required>
+            <div class="invalid-feedback">
+                Please provide a valid Account Number
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="policy_holder" class="col-sm-2 col-form-label">Policyholder Name(s)</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="policy_holder" name="policy_holder"
+                value="{{policyholder_name}}" required>
+            <div class="invalid-feedback">
+                Invalid Policyholder Name(s)
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="account_number" class="col-sm-2 col-form-label">Invoice Number</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="invoice_number" id="invoice_number" value="{{invoice_number}}"
+                required>
+            <div class="invalid-feedback">
+                Please provide a valid Invoice Number
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="memo" class="col-sm-2 col-form-label">Memo</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="memo" name="memo" value="{{memo}}">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="email" name="email" value="{{customer_email}}" required>
+            <div class="invalid-feedback">
+                Please provide a valid Email Address
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="email" class="col-sm-2 col-form-label">Phone Number</label>
+        <div class="col-sm-10">
+            <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{phone_number}}"
+                required>
+            <div class="invalid-feedback">
+                Please provide a valid Phone Number
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="amount" class="col-sm-2 col-form-label">Amount (max $10,000):CAD</label>
+        <div class="col-sm-10">
+            <input type="number" class="form-control" value="{{total_amount}}" id="amount" name="amount" min="0.01"
+                max="10000.00" step="0.01" required>
+            <div class="invalid-feedback">
+                Invalid Dollar Amount. Please enter whole numbers or number with a maximum of 2 decimal values.
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-dark" type="submit">CONTINUE<i class="fas fa-chevron-right ml-2"></i></button>
+</form>
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    formSubmit(event, form);
+                }, false);
+            });
+        }, false);
+    })();
+
+    function formSubmit(event, form) {
+        event.preventDefault();
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+        form.classList.add('was-validated');
+        grecaptcha.ready(function () {
+            grecaptcha.execute('6Le-qaoZAAAAAB5FhGBE9dEcywmV-ZlXt-0dflXK', { action: 'submit' }).then(function (token) {
+                $.ajax({
+                    url: '/api/payments/verify',
+                    data: {
+                        token: token
+                    },
+                    context: form,
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.successful) {
+                            form.removeEventListener("submit", formSubmit);
+                            form.submit();
+                        } else {
+                            console.log("error", "Google classified you as robot")
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log("Error", errorThrown);
+                    }
+                })
+            });
+        });
+    }
+</script>
